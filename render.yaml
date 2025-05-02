@@ -22,4 +22,3 @@ services:
       - key: NEXT_PUBLIC_API_URL
         value: https://be-todo.onrender.com # Update with your actual backend URL
     buildCommand: npm install && npm run build
-    startCommand: npm start
