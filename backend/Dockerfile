@@ -1,14 +1,20 @@
-FROM nginx:alpine
+# Use Node.js base image
+FROM node:18-alpine
+
+# Set the working directory
 WORKDIR /app
+
+# Copy package.json and package-lock.json
 COPY package*.json ./
+
+# Install dependencies
 RUN npm install
+
+# Copy the rest of the application code
 COPY . .
-# Create directory for SQLite database if it doesn't exist
-RUN mkdir -p /app/data
-# Set permissions for the data directory
-RUN chmod 777 /app/data
+
+# Expose the backend port
 EXPOSE 5000
-# Add environment variables
-ENV PORT=5000
-ENV DATABASE_URL="file:/app/data/database.sqlite"
-CMD ["npm", "start"]
+
+# Start the backend server
+CMD ["node", "server.js"]
