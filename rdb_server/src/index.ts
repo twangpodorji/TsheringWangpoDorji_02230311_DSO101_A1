@@ -1,6 +1,5 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-// import { PrismaClient } from "./generated/prisma";
 import { PrismaClient } from "./generated/prisma/index.js";
 import { cors } from "hono/cors";
 
