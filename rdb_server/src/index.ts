@@ -2,6 +2,8 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { PrismaClient } from "./generated/prisma/index.js";
 import { cors } from "hono/cors";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const app = new Hono();
 const prisma = new PrismaClient();
@@ -58,7 +60,7 @@ app.get("/", (c) => {
 serve(
   {
     fetch: app.fetch,
-    port: 4000,
+    port: Number(process.env.PORT) || 4000,
   },
   (info) => {
     console.log(`Server is running on http://localhost:${info.port}`);
