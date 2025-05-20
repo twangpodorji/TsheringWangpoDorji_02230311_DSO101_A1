@@ -1,10 +1,13 @@
-"use client"; // This is a client component which is used to render the user interface of the task manager application
+"use client"; // using
 
 import { useState } from "react";
 // Installating the lucide which is a react package for the icon which is being used in the
 // user interface for deleting the task
 import { Trash2 } from "lucide-react";
 import { useEffect } from "react";
+
+const API_URL = process.env.REACT_APP_API_URL;
+console.log("API_URL:", API_URL);
 
 export default function Home() {
   // This is the main component of the task manager application
@@ -14,8 +17,7 @@ export default function Home() {
 
   const addTask = async () => {
     if (newTaskTitle.trim() === "") return;
-
-    const res = await fetch("http://localhost:4000/tasks", {
+    const res = await fetch(`${API_URL}/tasks`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -30,8 +32,21 @@ export default function Home() {
     setNewTaskDescription("");
   };
 
+  const updateTask = async (id, updatedTask) => {
+    const res = await fetch(`${API_URL}/tasks/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedTask),
+    });
+
+    const updatedTasks = tasks.map((task) =>
+      task.id === id ? { ...task, ...updatedTask } : task
+    );
+    setTasks(updatedTasks);
+  };
+
   const deleteTask = async (id) => {
-    await fetch(`http://localhost:4000/tasks/${id}`, {
+    await fetch(`${API_URL}/tasks/${id}`, {
       method: "DELETE",
     });
 
@@ -41,7 +56,7 @@ export default function Home() {
   // For initial loading (fetch all tasks)
   useEffect(() => {
     async function fetchTasks() {
-      const res = await fetch("http://localhost:4000/tasks");
+      const res = await fetch(`${API_URL}/tasks`);
       const data = await res.json();
       setTasks(data);
     }

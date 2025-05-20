@@ -4,21 +4,29 @@ services:
     env: docker
     dockerfilePath: ./backend/Dockerfile
     envVars:
-      - key: DATABASE_URL
-        value: "file:/app/data/database.sqlite"
+      - key: DB_HOST
+        value: your-render-db-host
+      - key: DB_USER
+        value: your-render-db-user
+      - key: DB_PASSWORD
+        value: your-render-db-password
+      - key: DB_NAME
+        value: todo_db
       - key: PORT
         value: 5000
-    disk:
-      name: sqlite-data
-      mountPath: /app/data
-      sizeGB: 1
-    healthCheckPath: /api/health
+    healthCheckPath: /api/tasks
 
   - type: web
     name: fe-todo
     env: docker
     dockerfilePath: ./frontend/Dockerfile
     envVars:
-      - key: NEXT_PUBLIC_API_URL
-        value: https://be-todo.onrender.com # Update with your actual backend URL
-    buildCommand: npm install && npm run build
+      - key: REACT_APP_API_URL
+        value: https://be-todo.onrender.com
+    
+  - type: postgresql
+    name: todo-db
+    ipAllowList: []
+    plan: free
+    databases:
+      - name: todo_db

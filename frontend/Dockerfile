@@ -1,10 +1,13 @@
-FROM node:18-alpine AS build
+# Use a compatible Node.js version for Next.js
+FROM node:18-alpine
+
+# Set the working directory
 WORKDIR /app
+
+# Copy package.json and package-lock.json
 COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-FROM nginx:alpine
-COPY --from=build /app/.next /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+
+# Install dependencies
+RUN npm install 
+
+# Pass environment
