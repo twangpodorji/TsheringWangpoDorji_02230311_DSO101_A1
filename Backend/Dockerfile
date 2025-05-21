@@ -26,4 +26,4 @@ RUN npm run build
 EXPOSE 4000
 
 # Start the application (run the compiled JavaScript file)
-CMD ["node", "dist/index.js"]
+CMD ["node", "src/index.js"]
