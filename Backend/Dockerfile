@@ -10,14 +10,17 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+# Generate Prisma client
+RUN npx prisma generate
+
 # Copy the rest of the application code
 COPY . .
 
-# Build the application
+# Build the application (compile TypeScript to JavaScript)
 RUN npm run build
 
 # Expose the application port
 EXPOSE 4000
 
-# Start the application
+# Start the application (run the compiled JavaScript file)
 CMD ["node", "dist/index.js"]
