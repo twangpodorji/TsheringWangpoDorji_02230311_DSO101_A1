@@ -1,4 +1,4 @@
-# Use Node.js 18-alpine as the base image
+# Use a Node.js base image
 FROM node:18-alpine
 
 # Set the working directory
@@ -13,8 +13,11 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Expose the backend port
+# Build the application
+RUN npm run build
+
+# Expose the application port
 EXPOSE 4000
 
-# Start the backend server
-CMD ["npm", "start"]
+# Start the application
+CMD ["node", "dist/index.js"]
