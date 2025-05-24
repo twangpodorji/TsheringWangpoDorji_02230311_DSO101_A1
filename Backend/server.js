@@ -1,4 +1,12 @@
-require("dotenv").config();
+const dotenv = require('dotenv');
+
+// Load the appropriate .env file
+if (process.env.NODE_ENV === 'production') {
+  dotenv.config({ path: '.env.production' });
+} else {
+  dotenv.config({ path: '.env' });
+}
+
 const express = require("express");
 const cors = require("cors");
 const { Sequelize, DataTypes } = require("sequelize");
