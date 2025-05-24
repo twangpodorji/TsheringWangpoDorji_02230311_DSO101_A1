@@ -1,4 +1,4 @@
-// File: /Users/tsheringwangpodorji/Desktop/TsheringWangpoDorji_02230311_DSO101_A1/Frontend/src/app/page.js
+// File: /Users/tsheringwangpodorji/Desktop/TsheringWangpoDorji_02230311_DSO101_A1/frontend/src/app/page.js
 import * as entry from '../../../src/app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
