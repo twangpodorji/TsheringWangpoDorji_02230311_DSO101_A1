@@ -1,166 +1,154 @@
-# Assignment 1[DevOps] - To-Do App Deployment
+# Todo List Application ( CI/CD Integration )
+## Creating the Todo List Application
 
-## Overview
+### Server-Side Architecture and Data Layer (Node.js + PostgreSQL)
 
-This report documents the implementation of Continuous Integration and Continuous Deployment (CI/CD) practices for a full-stack To-Do application. The project demonstrates containerization with Docker, automated deployment using Render.com, and integration with GitHub for continuous deployment workflows.
+- Developed an Express.js web server featuring RESTful API endpoints for comprehensive task  management (CURD) operations.
+- Established PostgreSQL database connectivity through configurable environmental variables.
+- Integrated Sequelize Object-Relational Mapping(ORM) for streamlined database interactions. 
+- Designed a Task data model incorporating description fields and completion tracking.
 
-## Architecture & Technology Stack
+Core implementation details(Key configurations):
 
-- **Frontend:** React
-- **Backend:** Node.js with Hono
-- **Database:** Sqlite for local development and PostgreSQL(render db) for production.
+- Dynamic configuration through environment variable management.
+- RESTful service endpoints supporting task creation, modification, removal operations as well as for updating task modification status.
+- Server deployment configured with flexible port assignment via environment settings. 
 
-### Environment Configuration
+A sample UI for the Todo List application which wroks locally with "CRUD" operations is shown below:
 
-Environment variables were properly implemented to separate configuration from code:
+![alt text](images/smaple-repredentation-todo-ui.png)
 
-- **Backend `.env` (External DB URL):**
-  ```env
-    DATABASE_URL="postgresql://wangpo_user:e2zHSNcdJidtN4JzR0yU372JIRKHxf6S@dpg-d0aejtidbo4c73edfoig-a.oregon-postgres.render.com/wangpo"
-  PORT=4000
-  ```
-- **Frontend `.env`:**
-  `    REACT_APP_API_URL=http://localhost:4000
-   `
-  **Note**: Used Port 4000 because port 5000 is already used by other processes.
+### Frontend or Client-Side Interface (React)
 
-### For the loacal testing:
+- Built a React-based user interface with implementation of components for task management.
+- Developed API integration layer for backend communication (i.e sequelize ORM).
+- Constructed interactive elements for task visualization, creation, modification, and deletion. 
+- Configured dynamic backend connectivity through environment-based API routing
 
-- **Backend:**
+Essential implementation features:
 
-  - Navigate to the `backend` directory (rdb_server).
-  - Run `npm i` and `npm run dev`.
+- Environment-driven API endpoint for configuration.
+- Dedicated component architecture for task item presentation. 
+- Interactive form interface for new task creation.
+- Comprehensive editing and removal capabilities.
 
-- **Frontend:**
-  - Navigate to the `frontend` directory.
-  - Run `npm i` and `npm run dev`.
+## Part A: Deploying Pre-built Docker Images and pushing it to the docker hub registry.
+1. Building Docker Images for Frontend and Backend and then Pushing to Docker Hub:
 
-## Part A: Dockerizing and Pushing to Docker Hub
+    Created Dockerfiles for both frontend and backend applications;
+- Backend Dockerfile
 
-### Docker Build
-
-To build the Docker images for both frontend and backend application, we create dockerfiles in their respective directories by using the image tagged as the student ID.
-
-### Dockerfile for the backend:
-
-![alt text](images/dockerfile-backend.png)
-
-### Sample Frontend Dockerfile:
-
-![alt text](<images/dockerfile-frontend .png>)
-
-### Docker Build and Push
-
-#### Backend
-
+```dockerfile 
+FROM --platform=linux/amd64 node:18-alpine
+RUN apk add --no-cache postgresql-client
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 5000
+CMD ["node", "server.js"]
 ```
-docker build -t wangpo1642/be-todo:02230311 .
-```
+- Frontend Dockerfile
 
-![alt text](images/build-backend.png)
-
-```
-docker push wangpo1642/be-todo:02230311
+```dockerfile
+FROM --platform=linux/amd64 node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
 ```
 
-![alt text](<images/dockerpush-backend .png>)
+**Note:** For Mac OS users, the `--platform=linux/amd64` flag is necessary to ensure compatibility with Docker Hub's architecture for building and pushing to dockerhub, otherwise it will cause an error connection in Render as illustrated below:
 
-### Frontend
+![alt text](<images/error(Without using amd64 linux).png>)
 
-```
-docker build -t wangpo1642/fe-todo:02230311 .
-```
+2. Building and Pushing Images to Docker Hub
 
-![alt text](<images/dockerbuild-frontend .png>)
+- Built and Push Backend Docker Image:
 
-```
-docker push wangpo1642/fe-todo:02230311
-```
-![alt text](<images/dockerpush-frontend .png>)
+![alt text](images/dockerbuild-be-todo.png)
 
-## Part A: Deploying to Render
+![alt text](images/DockerPush-be-todo.png)
 
-### Backend Web Service
+- Built and Push Frontend Docker Image:
 
-Now in this section, we will deploy the backend and frontend applications to Render.com.
+![alt text](images/Dockerbuild-fe-todo.png)
 
-Image: `wangpo1642/be-todo:02230311`
+![alt text](images/DockerPush-fe-todo.png)
 
-![alt text](images/parta-deployment-to-render.png)
-![alt text](images/parta-img2.png)
+3. Deploying on Render.com
 
-Create a Postgres database on `render.com`
+- Set up a PostgreSQL database through Render's services.
 
-![alt text](images/db-render.png)
-![alt text](images/db-render2.png)
-Environment Variables on `render.com`:
+- Firstly Deploying backend Web Service using existing image from Docker Hub which has been built and pushed in the previous step which is as follows:
 
-```
-DB_HOST=dpg-d0aejtidbo4c73edfoig-a
-DB_USER=wangpo_user
-DB_PASSWORD=e2zHSNcdJidtN4JzR0yU372JIRKHxf6S
-DB_NAME=wangpo
-DB_PORT=5432
-PORT=5000
-```
+  - Chose the "Use existing Docker image" option.
+  - Selected the pre-built image: wangpo1642/be-todo:02230311.
 
-### Frontend Web Service
+![alt text](images/existingimage-be-todo.png)
 
-Now we will deploy the frontend application to Render.com.
+- Configuring environment variables to establish the database connection.
 
-Image: `wangpo1642/fe-todo:02230311`
+![alt text](images/environmental-variables.png)
 
-![alt text](<images/frontend-render .png>)
+- Results
+  - Successfully deployed backend service with PostgreSQL database connection.
+  - Backend service URL: https://be-todo-02230311.onrender.com
 
-Environment Variables on `render.com`(same process but set):
+![alt text](images/Result-be-todo(live).png)
 
-```
-REACT_APP_API_URL=https://be-todo-02230311-1.onrender.com
-```
+Deploying frontend as a Web Service:
 
-![](images/15.png)
+- Chose the "Use existing Docker image" option.
+- Selected the pre-built image: wangpo1642/fe-todo:02230311.
 
-## Part B: Automated image build and deployment
+![alt text](images/existingimage-fe-feto.png)
 
-### Updated Structure
+- Configure REACT_APP_API_URL to point to the backend server address in the environment variables for the frontend service as shown below:
+```REACT_APP_API_URL=https://fe-todo-02230311.onrender.com```
 
-```
-todo-app/
-  ├── frontend/
-  │   └── Dockerfile
-  ├── backend/
-  │   └── Dockerfile
-  └── render.yaml
-```
+- Results
+  - Successfully deployed frontend service.
+  - Frontend service URL: https://fe-todo-02230311.onrender.com 
 
-### render.yaml
+![alt text](images/Result-fe-todo(live).png)
 
-```
-services:
-  - type: web
-    name: be-todo
-    env: docker
-    dockerfilePath: ./backend/Dockerfile
-    envVars:
-      - key: DATABASE_URL
-        value: https://be-todo-02230311-1.onrender.com
-      - key: PORT
-        value: 5000
-    disk:
-      name: fe-todo
-      mountPath: /app/data
-      sizeGB: 1
-    healthCheckPath: /api/health
+![alt text](images/live-frontend.png)
 
-  - type: web
-    name: fe-todo
-    env: docker
-    dockerfilePath: ./frontend/Dockerfile
-    envVars:
-      - key: NEXT_PUBLIC_API_URL
-        value: https://be-todo.onrender.com
-```
+## Part B: Automated Build and Deployment
 
-![alt text](images/finalimg.png)
+1. Setting Up render.yaml for Complete App Deployment
 
+    Made a render.yaml file that tells Render how to deploy both the frontend and backend parts of the app
 
+2. Fixing File Organization Problems Had trouble because the render.yaml file was in the wrong place. Since our project was inside a folder called "images", we had to:
+
+- Move the render.yaml file to the main folder. 
+- Change the file paths in render.yaml to point to the correct locations
+
+## Problems We Faced and How We Fixed Them
+
+1. Dockerfile for mac 
+   - Initially, the Dockerfile was not compatible with Mac OS, causing issues when trying to build and push images.
+   - Solution: Added `--platform=linux/amd64` to the Docker build command to ensure compatibility with Docker Hub.
+
+2. Dockerfile vunerability for Mac os
+   - The Dockerfile for the backend and frontend had a vulnerability due to the use of `node:18-alpine` image.
+
+   - Unable to solve since the backned needs to be build with node.js and it works only with the usage of nginx.
+
+## Conclusion
+
+Successfully implemented a Todo List application with CI/CD integration:
+
+- Created a full-stack application with React frontend and Node.js backend
+- Used environment variables for configuration
+- Set up Docker containerization for both frontend and backend
+- Deployed Docker images to Docker Hub
+- Created a render.yaml configuration for automated deployment
+- Implemented Blueprint deployment from the repository
+
+The application demonstrates a complete CI/CD workflow where changes pushed to GitHub automatically trigger the build and deployment of updated Docker images on Render.com.

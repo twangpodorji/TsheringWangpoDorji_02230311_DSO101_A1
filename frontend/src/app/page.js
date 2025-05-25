@@ -111,7 +111,7 @@ export default function Home() {
         />
         <button
           onClick={addTask}
-          className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
+          className="bg-blue-500 hover:bg-blue- text-white p-2 rounded"
         >
           Add Task
         </button>
@@ -150,7 +150,7 @@ export default function Home() {
                 </button>
               </div>
             ) : (
-              // View Mode
+              // View Mode for the task 
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="font-bold">{task.title}</h2>
