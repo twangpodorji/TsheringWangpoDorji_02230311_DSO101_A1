@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Database Connection with Sequelize
+// Database Connection with Sequelize ORM
 const sequelize = new Sequelize({
   database: process.env.DB_NAME || 'todos',
   username: process.env.DB_USER,

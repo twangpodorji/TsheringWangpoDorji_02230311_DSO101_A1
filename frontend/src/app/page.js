@@ -1,11 +1,12 @@
 "use client";
-
+// Import necessary libraries and components of the React application
 import { useState, useEffect } from "react";
-import { Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react"; // Icon for delete button because it looks nice and is widely used
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:4000"; // Default to localhost if not set
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:4000"; // Default to localhost if not set and for local development
 console.log("API_URL:", API_URL);
 
+// Main component for the home page of the application which manages tasks
 export default function Home() {
   const [tasks, setTasks] = useState([]);
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -14,37 +15,37 @@ export default function Home() {
   const [editingTaskTitle, setEditingTaskTitle] = useState("");
   const [editingTaskDescription, setEditingTaskDescription] = useState("");
 
-  // Fetch all tasks
+  // Fetching all tasks from the backend API
   const fetchTasks = async () => {
     try {
-      const res = await fetch(`${API_URL}/tasks`);
-      if (!res.ok) throw new Error("Failed to fetch tasks");
-      const data = await res.json();
-      setTasks(data);
+      const res = await fetch(`${API_URL}/tasks`);// make a GET request to the API
+      if (!res.ok) throw new Error("Failed to fetch tasks");// Check if the response is ok 
+      const data = await res.json();// Parse the response data as JSON
+      setTasks(data);// Update the state with the fetched tasks
     } catch (err) {
-      console.error("Error fetching tasks:", err.message);
+      console.error("Error fetching tasks:", err.message);// any errors that occur during the fetch
     }
   };
 
-  // Add a new task
+  // Add a new task to the backend 
   const addTask = async () => {
-    if (newTaskTitle.trim() === "") return;
+    if (newTaskTitle.trim() === "") return; // Prevent adding empty tasks with an empty title
     try {
       const res = await fetch(`${API_URL}/tasks`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "POST", // HTTP method to create a new task
+        headers: { "Content-Type": "application/json" }, // specify the content type as JSON
         body: JSON.stringify({
           title: newTaskTitle,
           description: newTaskDescription,
         }),
       });
-      if (!res.ok) throw new Error("Failed to create task");
+      if (!res.ok) throw new Error("Failed to create task"); // handles errors if the response is not ok
       const createdTask = await res.json();
-      setTasks([createdTask, ...tasks]);
+      setTasks([createdTask, ...tasks]); //add the new tsk to the list 
       setNewTaskTitle("");
-      setNewTaskDescription("");
+      setNewTaskDescription(""); // clear the input fields 
     } catch (err) {
-      console.error("Error adding task:", err.message);
+      console.error("Error adding task:", err.message); // if errors occur during the fetch
     }
   };
 
@@ -52,20 +53,20 @@ export default function Home() {
   const updateTask = async (id) => {
     try {
       const res = await fetch(`${API_URL}/tasks/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        method: "PUT", // HTTP method to update an existing task
+        headers: { "Content-Type": "application/json" }, // specify the content type as JSON
         body: JSON.stringify({
           title: editingTaskTitle,
           description: editingTaskDescription,
         }),
       });
-      if (!res.ok) throw new Error("Failed to update task");
+      if (!res.ok) throw new Error("Failed to update task"); // Check if the response is ok
       const updatedTask = await res.json();
       const updatedTasks = tasks.map((task) =>
         task.id === id ? updatedTask : task
       );
       setTasks(updatedTasks);
-      setEditingTaskId(null); // Exit edit mode
+      setEditingTaskId(null); // Exit edit mode 
     } catch (err) {
       console.error("Error updating task:", err.message);
     }

@@ -100,6 +100,8 @@ CMD ["npm", "start"]
 
 ![alt text](images/Result-be-todo(live).png)
 
+![alt text](images/be-todo-live2.png)
+
 Deploying frontend as a Web Service:
 
 - Chose the "Use existing Docker image" option.
